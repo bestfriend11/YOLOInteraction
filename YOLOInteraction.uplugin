@@ -1,0 +1,16 @@
+{
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "1.0",
+  "FriendlyName": "YOLO Interaction",
+  "Description": "Generic interaction framework used by YOLOInventory (trace, prompt, server-validated interact).",
+  "Category": "Gameplay",
+  "Modules": [
+    {
+      "Name": "YOLOInteraction",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    }
+  ],
+  "EnabledByDefault": true
+}
