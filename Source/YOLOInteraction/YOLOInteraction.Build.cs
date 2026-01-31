@@ -16,11 +16,13 @@ public class YOLOInteraction : ModuleRules
             "Networking",
             "UMG",
             "Slate",
-            "SlateCore"
+            "SlateCore",
+            "YOLOInventory" // need item helpers/types
         });
 
         PrivateDependencyModuleNames.AddRange(new string[]
         {
+            "GameplayTags",
         });
     }
 }

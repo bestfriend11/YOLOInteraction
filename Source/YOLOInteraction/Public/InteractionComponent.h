@@ -27,6 +27,10 @@ public:
     UFUNCTION(BlueprintCallable, Category="Interaction")
     void Interact();
 
+    /** Exec helper: toggle debug overlay for interaction (client only). */
+    UFUNCTION(Exec)
+    void yolo_interaction_debug(int32 bEnable);
+
 protected:
     virtual void BeginPlay() override;
     virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;

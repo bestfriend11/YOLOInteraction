@@ -5,6 +5,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
+#include "YOLOInteraction.h"
 
 UInteractionComponent::UInteractionComponent()
 {
@@ -27,13 +28,15 @@ void UInteractionComponent::UpdateFocus()
 {
     AActor* Owner = GetOwner();
     if (!Owner) return;
-    FVector Start, Dir;
+    FVector Start;
+    FRotator ViewRot;
+    FVector Dir;
     if (APawn* Pawn = Cast<APawn>(Owner))
     {
         if (AController* C = Pawn->GetController())
         {
-            C->GetPlayerViewPoint(Start, Dir.Rotation());
-            Dir = Dir.Rotation().Vector();
+            C->GetPlayerViewPoint(Start, ViewRot);
+            Dir = ViewRot.Vector();
         }
         else
         {
@@ -57,6 +60,11 @@ void UInteractionComponent::UpdateFocus()
         AActor* Old = FocusedActor.Get();
         FocusedActor = NewFocus;
         OnFocusChanged.Broadcast(NewFocus, Old);
+        if (GYOLOInteractionDebug && GEngine)
+        {
+            GEngine->AddOnScreenDebugMessage(INDEX_NONE, 1.0f, FColor::Yellow,
+                FString::Printf(TEXT("[Interaction] Focus -> %s"), *GetNameSafe(NewFocus)));
+        }
     }
 }
 
@@ -82,6 +90,11 @@ void UInteractionComponent::ServerInteract_Implementation(AActor* Target)
             // For simplicity, immediate complete; extend with timers if needed.
             Comp->Complete(GetOwner());
         }
+        if (GYOLOInteractionDebug && GEngine)
+        {
+            GEngine->AddOnScreenDebugMessage(INDEX_NONE, 2.f, FColor::Green,
+                FString::Printf(TEXT("[Interaction] Used %s"), *GetNameSafe(Target)));
+        }
     }
     // Specialized interfaces
     if (Target->GetClass()->ImplementsInterface(UTradeInteractable::StaticClass()))
@@ -97,4 +110,14 @@ void UInteractionComponent::ServerInteract_Implementation(AActor* Target)
 bool UInteractionComponent::ServerInteract_Validate(AActor* Target)
 {
     return true;
+}
+
+void UInteractionComponent::yolo_interaction_debug(int32 bEnable)
+{
+    GYOLOInteractionDebug = bEnable != 0 ? 1 : 0;
+    if (GEngine)
+    {
+        GEngine->AddOnScreenDebugMessage(INDEX_NONE, 2.f, FColor::Yellow,
+            FString::Printf(TEXT("Interaction debug %s"), GYOLOInteractionDebug ? TEXT("ON") : TEXT("OFF")));
+    }
 }
