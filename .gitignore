@@ -1,0 +1,24 @@
+# Unreal / Visual Studio / Windows common
+Binaries/
+Intermediate/
+DerivedDataCache/
+Saved/
+.vs/
+.vscode/
+*.sdf
+*.sln
+*.opensdf
+*.suo
+*.log
+*.tlog
+*.pdb
+*.ipch
+*.obj
+*.user
+*.aps
+*.ncb
+*.vcxproj*
+*.xcodeproj*
+*.xcworkspace/
+*.DS_Store
+Thumbs.db
