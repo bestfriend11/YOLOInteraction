@@ -18,8 +18,20 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction")
     float MaxDistance = 400.f;
 
+    /** Optional sphere radius for focus trace (0 = line trace). */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction")
-    TEnumAsByte<ECollisionChannel> TraceChannel = ECC_Visibility;
+    float TraceRadius = 12.f;
+
+    /** Debug: extra overlap radius to list nearby interactables (only used when debug is on). */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction|Debug")
+    float DebugScanRadius = 200.f;
+
+    /** Debug: duration for debug shapes per tick. */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction|Debug")
+    float DebugDrawTime = 0.05f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction")
+    TEnumAsByte<ECollisionChannel> TraceChannel = ECC_GameTraceChannel1; // default: Interaction channel
 
     UPROPERTY(BlueprintAssignable, Category="Interaction|Events")
     FOnInteractionFocusChanged OnFocusChanged;
@@ -38,7 +50,11 @@ protected:
 private:
     TWeakObjectPtr<AActor> FocusedActor;
     void UpdateFocus();
+    void DrawDebug(const FVector& Start, const FVector& End, const FHitResult& Hit, const TArray<TWeakObjectPtr<AActor>>& Candidates);
+    APawn* GetViewPawn() const;
 
     UFUNCTION(Server, Reliable, WithValidation)
     void ServerInteract(AActor* Target);
+
+    TArray<TWeakObjectPtr<AActor>> DebugCandidates;
 };

@@ -9,7 +9,9 @@ AInteractionPickup::AInteractionPickup()
 {
     Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
     RootComponent = Mesh;
-    Mesh->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
+    Mesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+    Mesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+    Mesh->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 
     Interactable = CreateDefaultSubobject<UInteractableComponent>(TEXT("Interactable"));
     Interactable->Prompt = NSLOCTEXT("YOLOInteraction", "PickupPrompt", "Pick Up");
@@ -17,7 +19,10 @@ AInteractionPickup::AInteractionPickup()
 
 bool AInteractionPickup::CanInteract_Implementation(AActor* Interactor) const
 {
-    return Interactable ? Interactable->IsAvailable(Interactor) : false;
+    // Avoid recursive calls into InteractableComponent::IsAvailable -> CanInteract
+    if (ItemDef.IsNull()) return false;
+    if (Count <= 0) return false;
+    return true;
 }
 
 void AInteractionPickup::BeginInteract_Implementation(AActor* Interactor)

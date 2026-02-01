@@ -24,6 +24,14 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction")
     int32 MaxUsers = 1;
 
+    /** If true and owner implements IInteractable, defer to its CanInteract/Begin/Complete/Cancel implementations. Disable to rely only on this component. */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction")
+    bool bConsultOwnerImplementation = true;
+
+    /** Automatically make the owner's root component block the Interaction channel (fallback to Visibility) at BeginPlay. */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interaction|Collision")
+    bool bAutoEnableInteractionCollision = true;
+
     /** Returns true if actor implements IInteractable and is available. */
     bool IsAvailable(AActor* Interactor) const;
 
@@ -33,4 +41,8 @@ public:
 
 private:
     int32 ActiveUsers = 0;
+    mutable bool bInOwnerCall = false;
+
+protected:
+    virtual void BeginPlay() override;
 };
